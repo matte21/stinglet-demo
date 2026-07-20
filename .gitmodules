@@ -6,3 +6,7 @@
 	path = components/crun
 	url = https://github.com/matte21/stinglet-crun
 	branch = fg-cgroups
+[submodule "components/cri-o"]
+	path = components/cri-o
+	url = https://github.com/matte21/stinglet-cri-o
+	branch = fg-cgroups
