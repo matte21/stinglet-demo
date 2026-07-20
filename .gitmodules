@@ -1,0 +1,4 @@
+[submodule "components/stinglet"]
+	path = components/stinglet
+	url = https://github.com/matte21/stinglet-k8s
+	branch = stinglet
