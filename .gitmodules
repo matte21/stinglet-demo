@@ -10,3 +10,7 @@
 	path = components/cri-o
 	url = https://github.com/matte21/stinglet-cri-o
 	branch = fg-cgroups
+[submodule "components/linux"]
+	path = components/linux
+	url = https://github.com/matte21/stinglet-linux
+	branch = fg-cgroups-v6.6
