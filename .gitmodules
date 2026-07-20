@@ -2,3 +2,7 @@
 	path = components/stinglet
 	url = https://github.com/matte21/stinglet-k8s
 	branch = stinglet
+[submodule "components/crun"]
+	path = components/crun
+	url = https://github.com/matte21/stinglet-crun
+	branch = fg-cgroups
