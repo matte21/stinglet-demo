@@ -35,8 +35,9 @@ just press enter):
 build-and-install/3-linux.sh
 ```
 
-The script takes from several minutes to one or two hours (depending on how many CPUs your machine has), but the interactive part is
-only during the first 5 minutes, so after 5 minutes you no longer need to attend to it.
+The script takes from several minutes to one or two hours (depending on the number of CPUs,
+the currently loaded modules, and the current kernel config of your machine), but the interactive
+part is only during the first 5 minutes, so after 5 minutes you no longer need to attend to it.
 
 After the script is done, you need to identify the name of the new kernel, and make it the default
 kernel to use on reboot.
