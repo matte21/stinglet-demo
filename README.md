@@ -87,7 +87,8 @@ sudo build-and-install/4-crio-and-crun.sh
 
 It will take a few minutes to run. When done, verify that our custom cri-o and crun have been installed.
 
-First, check that the binaries at the default paths are the ones in our submodules:
+To do that, begin by checking that the binaries at the default paths are the ones in our submodules;
+you can compare the binaries' md5s to make sure they are identical:
 
 CRI-O:
 
@@ -101,18 +102,17 @@ crun:
 md5sum components/crun/crun /usr/libexec/crio/crun
 ```
 
-Then, check that the binaries in our submodules have been built from the submodules
-pinned commits.
+If they are identical, you're good, otherwise, there's a bug.
+
+Then, check that the binaries in our submodules have been built from the submodules' pinned commits.
 
 ```bash
 git submodule status components/crun components/cri-o
 ```
 
-Neither line may start with a `+` (a `+` means the checkout has drifted from
-the pinned commit).
+Neither line may start with a `+` (a `+` means the checkout has drifted from the pinned commit).
 
-If the md5sums match and no line starts with a `+` the installation was successful, otherwise,
-something went wrong.
+If no line starts with a `+` the installation was successful, otherwise, there's a bug.
 
 ### Step 5: Build and Install Stinglet
 
@@ -149,4 +149,4 @@ Once done with the experiments, you can stop Stinglet (and CRI-O):
 ./stop.sh
 ```
 
-Note that the script deletes all currently running pods and wait for them to have been deleted.
+Note that the script deletes all currently running pods and waits for them to have been deleted.
