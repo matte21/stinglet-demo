@@ -1,5 +1,7 @@
 # Stinglet Deployment Instructions
 
+TODO: Overview
+
 ## Build and Install Stinglet and Its Dependencies
 
 ### Step 1: Clone this Repo and Set it as Working Directory
@@ -111,3 +113,40 @@ the pinned commit).
 
 If the md5sums match and no line starts with a `+` the installation was successful, otherwise,
 something went wrong.
+
+### Step 5: Build and Install Stinglet
+
+Run:
+
+```bash
+build-and-install/stinglet.sh
+```
+
+## Run Stinglet
+
+Run:
+
+```bash
+./run.sh
+```
+
+On success, the output should be:
+
+```text
+// some other prints...
+
+CRI-O up and running.
+
+// some other prints...
+
+Stinglet up and running.
+Success!
+```
+
+Once done with the experiments, you can stop Stinglet (and CRI-O):
+
+```bash
+./stop.sh
+```
+
+Note that the script deletes all currently running pods and wait for them to have been deleted.
