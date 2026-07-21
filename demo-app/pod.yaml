@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: memhog
+  labels:
+    app: memhog
+  annotations:
+    memhog/far-mem: "4Gi"
+spec:
+  containers:
+  - name: memhog
+    image: mattedocker/memhog:v0
+    args: ["-m", "8"]
+    securityContext:
+      capabilities:
+        add: ["IPC_LOCK"]
+    resources:
+      requests:
+        cpu: "1"
+        # The app locks 8 GiB total; 4 GiB is requested as far (CXL) memory via
+        # the memhog/far-mem annotation, so only the 4 GiB (4096Mi) near portion
+        # goes here, plus ~208Mi process overhead (binary, stack, libc).
+        memory: "4304Mi"
+      limits:
+        cpu: "1"
+        memory: "4304Mi"
