@@ -35,6 +35,16 @@ apt-get update -qq && apt-get install -y \
   libassuan-dev libglib2.0-dev libc6-dev libgpgme-dev libgpg-error-dev libselinux1-dev \
   libudev-dev software-properties-common jq golang-github-containers-common crun
 
+# Install crictl (CRI-O's cli) if not already present.
+if command -v crictl > /dev/null; then
+  echo "crictl is already installed"
+else
+  CRICTL_VERSION="v1.33.0"
+  curl -fsSL "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-amd64.tar.gz" -o /tmp/crictl.tar.gz
+  tar -C /usr/local/bin -xzf /tmp/crictl.tar.gz
+  rm /tmp/crictl.tar.gz
+fi
+
 # kubelet, k8s, cri-o, etc.. are very finnicky about the go version used to build them - if a go
 # version is already installed use that one rather than the one that the ubuntu distro installs
 # by default. Otherwise we might overwrite it with a wrong version or end up with mutliple versions
@@ -99,6 +109,46 @@ else
   sed -i '/default_runtime = "crun"/a conmon_cgroup = "pod"' "$crio_cfg_file"
   sed -i '/conmon_cgroup = "pod"/a cgroup_manager = "cgroupfs"' "$crio_cfg_file"
 fi
+
+# Prepare K8s's networking configuration.
+readonly cni_cfg_file="/etc/cni/net.d/10-crio-bridge.conflist"
+if [[ -f "$cni_cfg_file".disabled ]]; then
+  mv "$cni_cfg_file".disabled "$cni_cfg_file"
+elif [[ ! -f "$cni_cfg_file" ]]; then
+  tee "$cni_cfg_file" > /dev/null << 'EOF'
+{
+  "cniVersion": "1.0.0",
+  "name": "crio",
+  "plugins": [
+    {
+      "type": "bridge",
+      "bridge": "cni0",
+      "isGateway": true,
+      "ipMasq": true,
+      "hairpinMode": true,
+      "ipam": {
+        "type": "host-local",
+        "routes": [
+            { "dst": "0.0.0.0/0" },
+            { "dst": "::/0" }
+        ],
+        "ranges": [
+            [{ "subnet": "10.85.0.0/16" }],
+            [{ "subnet": "1100:200::/24" }]
+        ]
+      }
+    }
+  ]
+}
+EOF
+fi
+
+tee /etc/crio/crio.conf.d/20-cni.conf > /dev/null << 'EOF'
+[crio.network]
+plugin_dirs = [
+    "/usr/lib/cni",
+]
+EOF
 
 # Overwrite vanilla crun binary with our custom one.
 cp components/crun/crun "/usr/libexec/crio/crun"

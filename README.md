@@ -119,7 +119,7 @@ If no line starts with a `+` the installation was successful, otherwise, there's
 Run:
 
 ```bash
-build-and-install/stinglet.sh
+build-and-install/5-stinglet.sh
 ```
 
 ## Run Stinglet
