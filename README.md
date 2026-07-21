@@ -74,3 +74,12 @@ installation we'd see:
 uname -r
 6.6.0-stinglet-fg-cgroups+
 ```
+
+### Step 4: Build and Install CRI-O and crun
+
+Run:
+
+```bash
+sudo build-and-install/4-crio-and-crun.sh
+```
+
