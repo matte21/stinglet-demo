@@ -1,4 +1,4 @@
-# Stinglet Deployment Instructions
+# Stinglet Demo
 
 TODO: Overview
 
@@ -9,8 +9,8 @@ TODO: Overview
 Run:
 
 ```bash
-git clone https://github.com/matte21/stinglet-deploy && \
-    cd stinglet-deploy
+git clone https://github.com/matte21/stinglet-demo && \
+    cd stinglet-demo
 ```
 
 ### Step 2: Pull the Submodules for Stinglet and its Dependencies
