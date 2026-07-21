@@ -4,7 +4,7 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-cfg_local_version="${cfg_local_version:-stinglet-fg-cgroups}"
+cfg_local_version="${cfg_local_version:--stinglet-fg-cgroups}"
 
 if [[ $# -gt 1 ]]; then
     echo "Error: at most one argument allowed" >&2
