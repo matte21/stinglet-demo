@@ -83,3 +83,31 @@ Run:
 sudo build-and-install/4-crio-and-crun.sh
 ```
 
+It will take a few minutes to run. When done, verify that our custom cri-o and crun have been installed.
+
+First, check that the binaries at the default paths are the ones in our submodules:
+
+CRI-O:
+
+```bash
+md5sum components/cri-o/bin/crio /usr/bin/crio /usr/local/bin/crio
+```
+
+crun:
+
+```bash
+md5sum components/crun/crun /usr/libexec/crio/crun
+```
+
+Then, check that the binaries in our submodules have been built from the submodules
+pinned commits.
+
+```bash
+git submodule status components/crun components/cri-o
+```
+
+Neither line may start with a `+` (a `+` means the checkout has drifted from
+the pinned commit).
+
+If the md5sums match and no line starts with a `+` the installation was successful, otherwise,
+something went wrong.
