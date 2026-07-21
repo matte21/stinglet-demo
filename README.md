@@ -151,3 +151,11 @@ Once done with the experiments, you can stop Stinglet (and CRI-O):
 ```
 
 Note that the script deletes all currently running pods and waits for them to have been deleted.
+
+## TODOs:
+
+1. Automate kernel installation more (e.g., by auto-updating grub and entering config defaults).
+2. Automate CRI-O and crun installation checks.
+3. Make scripts idempotent and more robust (e.g., allow them to pick up from where they
+left in case of partial failures).
+4. Make scripts portable to other Linux distros (e.g., Ubuntu 22.02 and Fedora).
