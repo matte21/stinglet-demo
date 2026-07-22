@@ -4,6 +4,7 @@ metadata:
   name: memhog
   labels:
     app: memhog
+  # The annotation uses Stinglet's API to make the app request 4 GiB of CXL memory. 
   annotations:
     memhog/far-mem: "4Gi"
 spec:

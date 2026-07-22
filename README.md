@@ -1,6 +1,8 @@
 # Stinglet Demo
 
-TODO: Overview
+TODO: Overview (pic)
+standalone kubelet
+some CXL memory is available 
 
 ## Build and Install Stinglet and Its Dependencies
 
@@ -144,13 +146,71 @@ Stinglet up and running.
 Success!
 ```
 
+Now that Stinglet is up and running, we will try it by deploying a demo application (app).
+
+The app allocates ~8 GiB of memory and then sleeps, but requests that 4 of those 8 GiB are
+allocated on CXL memory through Stinglet's API. The source code is at
+[demo-app/memhog.c](demo-app/memhog.c), while the
+YAML manifest of the Pod is at [demo-app/pod.yaml](demo-app/pod.yaml).
+Note [the Pod annotation](demo-app/pod.yaml#9) to request the 4 GiB of CXL memory.
+The container image of the pod has been pulled by the script that installs CRI-O.
+
+On the server where I tested the demo, there were two NUMA nodes: node 0, a normal node with both CPUs and local DRAM, and node 1, a CPU-less, CXL node, as shown in the following picture:
+
+![Pic of output of "numactl -H"](./pics/numactl.png).
+
+Now let's create the pod by copying its manifest to Stinglet's static pods path:
+
+```bash
+sudo cp demo-app/pod.yaml /etc/kubernetes/manifests
+```
+
+We can verify that the pod is up and running by querying Stinglet's API:
+
+```bash
+curl -s http://localhost:10255/pods | jq '.items[].status.containerStatuses[]? | {state: (.state | keys[0])}'
+
+# The following is the expected output.
+{
+  "state": "running"
+}
+```
+
+It takes a few seconds for the pod to start, so you might have to run the command a few times
+before the pod is running.
+
+Once the pod is running, let's verify that stinglet is giving to it 4 GiB of local memory (NUMA
+node 0) and 4 GiB of CXL memory (NUMA node 1) as requested. First, get the PID of the Pod:
+
+```bash
+app_pid=$(sudo crictl inspect $(sudo crictl ps --name memhog -q) | jq '.info.pid')
+```
+
+Then, check how much memory the Pod is using on each NUMA node:
+
+```bash
+sudo numastat -p $app_pid
+```
+
+The output should show that the pod is using (roughly) 4 GiB on each node:
+
+![Pic of per-NUMA nodem memory consumption of demo app](./pics/app-per-numa-node-mem-usage.png)
+
+This concludes our demo. Note that your machine might have more NUMA nodes
+and the IDs of the normal/CXL nodes might be different than those on my machine, so you'd see a
+different result, but what matters is that the demo app uses ~4 GiB on the CXL nodes and 4 GiB on
+the local nodes.   
+
+## Stop Stinglet
+
 Once done with the experiments, you can stop Stinglet (and CRI-O):
 
 ```bash
 ./stop.sh
 ```
 
-Note that the script deletes all currently running pods and waits for them to have been deleted.
+Note that the script deletes all currently running pods and waits for them to have been actually
+deleted by the container runtime.
 
 ## TODOs:
 
