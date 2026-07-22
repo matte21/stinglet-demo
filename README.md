@@ -1,7 +1,7 @@
 # Stinglet Demo
 
 This repo contains a demo of Stinglet. Stinglet is a cluster manager host
-agent with native support for CXL memory. Stinglet is implemented as
+agent with native support for CXL memory. It is implemented as
 a modified version of
 [kubelet](https://kubernetes.io/docs/concepts/architecture/#kubelet) v1.33
 ([K8s](https://kubernetes.io/docs/concepts/architecture/)' host agent).
