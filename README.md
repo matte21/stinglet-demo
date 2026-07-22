@@ -1,6 +1,18 @@
 # Stinglet Demo
 
 TODO: Overview (pic)
+
+Table of contents:
+- [Build and Install Stinglet and its Dependencies](#build-and-install-stinglet-and-its-dependencies)
+  - [Step 1: Clone this Repo and Set it as Working Directory](#step-1-clone-this-repo-and-set-it-as-working-directory)
+  - [Step 2: Pull the Submodules for Stinglet and its Dependencies](#step-2-pull-the-submodules-for-stinglet-and-its-dependencies)
+  - [Step 3: Build and Install the Custom Linux Kernel](#step-3-build-and-install-the-custom-linux-kernel)
+  - [Step 4: Build and Install CRI-O and crun](#step-4-build-and-install-cri-o-and-crun)
+  - [Step 5: Build and Install Stinglet](#step-5-build-and-install-stinglet)
+- [Run Stinglet and Deploy an Application](#run-stinglet-and-deploy-an-application)
+- [Stop Stinglet](#stop-stinglet)
+- [TODOs](#todos)
+
 standalone kubelet
 some CXL memory is available 
 
@@ -44,8 +56,8 @@ part is only during the first 5 minutes, so after 5 minutes you no longer need t
 After the script is done, you need to identify the name of the new kernel, and make it the default
 kernel to use on reboot.
 
-The custom kernel name includes the string `stinglet` and does NOT include the string `recovery`.
-On Ubuntu 24.04, file `/boot/grub/grub.cfg` includes one line with the kernel name, so we can grep it
+The new kernel name includes the string `stinglet` and does NOT include the string `recovery`.
+On Ubuntu 24.04, file `/boot/grub/grub.cfg` includes one line with the kernel name, so we can grep the file
 for `stinglet`, but there will be multiple matches and the matching line itself contains noise.
 Extract only the kernel name with:
 
@@ -88,7 +100,7 @@ Run:
 sudo build-and-install/4-crio-and-crun.sh
 ```
 
-It will take a few minutes to run. When done, verify that our custom cri-o and crun have been installed.
+It will take a few minutes to run. When done, verify that our custom CRI-O and crun have been installed.
 
 To do that, begin by checking that the binaries at the default paths are the ones in our submodules;
 you can compare the binaries' md5s to make sure they are identical:
@@ -125,7 +137,7 @@ Run:
 build-and-install/5-stinglet.sh
 ```
 
-## Run Stinglet
+## Run Stinglet and Deploy an Application
 
 Run:
 
@@ -153,7 +165,8 @@ allocated on CXL memory through Stinglet's API. The source code is at
 [demo-app/memhog.c](demo-app/memhog.c), while the
 YAML manifest of the Pod is at [demo-app/pod.yaml](demo-app/pod.yaml).
 Note [the Pod annotation](demo-app/pod.yaml#9) to request the 4 GiB of CXL memory.
-The container image of the pod has been pulled by the script that installs CRI-O.
+The container image of the pod has been pulled by the `run.sh` script we've
+already executed.
 
 On the server where I tested the demo, there were two NUMA nodes: node 0, a normal node with both CPUs and local DRAM, and node 1, a CPU-less, CXL node, as shown in the following picture:
 
@@ -219,3 +232,5 @@ deleted by the container runtime.
 3. Make scripts idempotent and more robust (e.g., allow them to pick up from where they
 left in case of partial failures).
 4. Make scripts portable to other Linux distros (e.g., Ubuntu 22.02 and Fedora).
+5. Harmonize scripts layout (e.g., move them all to a common `scripts/` folder and\
+give better names).
