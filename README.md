@@ -1,8 +1,45 @@
 # Stinglet Demo
 
-TODO: Overview (pic)
+This repo contains a demo of Stinglet. Stinglet is a cluster manager host
+agent with native support for CXL memory. Stinglet is implemented as
+a modified version of
+[kubelet](https://kubernetes.io/docs/concepts/architecture/#kubelet) v1.33
+([K8s](https://kubernetes.io/docs/concepts/architecture/)' host agent).
 
-Table of contents:
+Furthermore, Stinglet relies on a modified Linux kernel (v6.6) which supports
+fine-grained control over how much memory applications allocate on each
+tier of memory (where the tiers are *normal*, i.e., host-local, and CXL memory).
+This fine-grained control ensures that K8s Pods don't starve each other
+of normal memory; because the memory usage limits of a container are
+configured by the container runtime, Stinglet further modifies the
+[CRI-O](https://github.com/cri-o/cri-o) container runtime and its dependency
+[crun](https://github.com/containers/crun) to use the fine-grained memory usage
+limits of the custom Linux. We refer to Stinglet's custom Linux, CRI-O and crun
+as Stinglet's *dependencies*. The single-host view of the resuling architecture
+is shown below:
+
+![Pic of Stinglet's architecture](./pics/stinglet-architecture.svg)
+
+To set up the demo on a machine you have to install and run the custom Linux,
+CRI-O and crun on that machine (this repo includes git submodules to their
+github repos); we recommend you don't do that on your personal laptop.
+
+For ease of set up the demo runs Stinglet in
+[standalone mode](https://kubernetes.io/docs/tutorials/cluster-management/kubelet-standalone/),
+meaning that you don't need a complete K8s cluster comprising the control
+plane and multiple worker hosts; a single host where only Stinglet runs is
+enough ([pods are created by placing their manifests in a directory that Stinglet
+monitors](https://kubernetes.io/docs/concepts/workloads/pods/static-pods/),
+rather than calling the K8s API). 
+
+Note that Stinglet goal is allocating normal and CXL memory plugged to its host
+across Pods, not to orchestrate assignment of pooled CXL memory across hosts.
+Consequently, the demo assumes that some CXL memory is available to the host,
+either via an in-host expander or a CXL pool memory currently plugged to the host
+(stay tuned for instructions of how to simulate CXL memory if you don't have
+real one).
+
+Without further ado, here are the demo steps:
 - [Build and Install Stinglet and its Dependencies](#build-and-install-stinglet-and-its-dependencies)
   - [Step 1: Clone this Repo and Set it as Working Directory](#step-1-clone-this-repo-and-set-it-as-working-directory)
   - [Step 2: Pull the Submodules for Stinglet and its Dependencies](#step-2-pull-the-submodules-for-stinglet-and-its-dependencies)
@@ -12,9 +49,6 @@ Table of contents:
 - [Run Stinglet and Deploy an Application](#run-stinglet-and-deploy-an-application)
 - [Stop Stinglet](#stop-stinglet)
 - [TODOs](#todos)
-
-standalone kubelet
-some CXL memory is available 
 
 ## Build and Install Stinglet and Its Dependencies
 
@@ -227,6 +261,8 @@ deleted by the container runtime.
 
 ## TODOs:
 
+...to improve the demo.
+
 1. Automate kernel installation more (e.g., by auto-updating grub and entering config defaults).
 2. Automate CRI-O and crun installation checks.
 3. Make scripts idempotent and more robust (e.g., allow them to pick up from where they
@@ -234,3 +270,4 @@ left in case of partial failures).
 4. Make scripts portable to other Linux distros (e.g., Ubuntu 22.02 and Fedora).
 5. Harmonize scripts layout (e.g., move them all to a common `scripts/` folder and\
 give better names).
+6. Add instructions to simulate CXL memory out of normal memory.
