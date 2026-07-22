@@ -18,6 +18,10 @@ done
 
 echo CRI-O up and running.
 
+echo "pulling container image of demo application..."
+img=$(grep "image:" demo-app/pod.yaml | awk '{print $2}')
+sudo crictl pull "$img"
+
 # Now start stinglet.
 sudo systemctl start kubelet.service
 while [[ "$(sudo systemctl is-active kubelet.service)" != "active" ]]; do

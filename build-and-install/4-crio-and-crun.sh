@@ -159,6 +159,3 @@ cp components/crun/crun "/usr/libexec/crio/crun"
 cp components/cri-o/bin/crio "/usr/bin/crio"
 
 echo "configured custom crun and crio to be run."
-
-echo "pulling container image of demo application..."
-crictl pull mattedocker/memhog:v0
