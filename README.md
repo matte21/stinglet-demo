@@ -236,10 +236,11 @@ app_pid=$(sudo crictl inspect $(sudo crictl ps --name memhog -q) | jq '.info.pid
 Then, check how much memory the Pod is using on each NUMA node:
 
 ```bash
-sudo numastat -p $app_pid
+watch sudo numastat -p $app_pid
 ```
 
-The output should show that the pod is using (roughly) 4 GiB on each node:
+After a few seconds, the output should show that the pod is using
+(roughly) 4 GiB on each node:
 
 ![Pic of per-NUMA nodem memory consumption of demo app](./pics/app-per-numa-node-mem-usage.png)
 
@@ -256,8 +257,8 @@ Once done with the experiments, you can stop Stinglet (and CRI-O):
 ./stop.sh
 ```
 
-Note that the script deletes all currently running pods and waits for them to have been actually
-deleted by the container runtime.
+Note that the script deletes all currently running pods and waits for them to
+have been actually deleted by the container runtime - that might take up to a few minutes. 
 
 ## TODOs:
 
