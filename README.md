@@ -57,7 +57,7 @@ Without further ado, here are the demo steps:
 Run:
 
 ```bash
-git clone https://github.com/matte21/stinglet-demo && \
+git clone https://github.com/GTkernel/stinglet-demo && \
     cd stinglet-demo
 ```
 
